@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'firstName' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
@@ -39,7 +39,7 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'firstName.required' => 'Имя обязательно для заполнения.',
+            'name.required' => 'Имя обязательно для заполнения.',
             'city.required' => 'Город обязателен для заполнения.',
             'email.required' => 'Адрес электронной почты обязателен для заполнения.',
             'email.email' => 'Введите корректный адрес электронной почты.',

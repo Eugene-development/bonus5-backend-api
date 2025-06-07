@@ -21,7 +21,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = User::create([
-            'name' => $request->firstName,
+            'name' => $request->name,
             'email' => $request->email,
             'city' => $request->city,
             'password' => Hash::make($request->password),
