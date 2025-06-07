@@ -7,6 +7,8 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,12 +29,16 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Отправляем событие Registered для автоматической отправки email verification
+        event(new Registered($user));
+
         // Для SPA аутентификации регистрируем и логиним пользователя
         Auth::login($user, $request->boolean('remember_me', false));
 
         return response()->json([
-            'message' => 'Пользователь успешно зарегистрирован',
+            'message' => 'Пользователь успешно зарегистрирован. Проверьте email для верификации.',
             'user' => new UserResource($user),
+            'email_verification_required' => !$user->hasVerifiedEmail(),
         ], 201);
     }
 
@@ -69,6 +75,59 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Успешный выход из системы',
+        ]);
+    }
+
+    /**
+     * Отправка письма с верификацией email
+     */
+    public function sendEmailVerification(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Email уже подтвержден',
+            ], 422);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json([
+            'message' => 'Письмо с подтверждением отправлено',
+        ]);
+    }
+
+    /**
+     * Верификация email по токену
+     */
+    public function verifyEmail(EmailVerificationRequest $request): JsonResponse
+    {
+        $request->fulfill();
+
+        return response()->json([
+            'message' => 'Email успешно подтвержден',
+            'user' => new UserResource($request->user()),
+        ]);
+    }
+
+    /**
+     * Повторная отправка письма с верификацией
+     */
+    public function resendEmailVerification(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Email уже подтвержден',
+            ], 422);
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json([
+            'message' => 'Письмо с подтверждением отправлено повторно',
         ]);
     }
 }
