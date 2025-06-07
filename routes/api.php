@@ -2,8 +2,12 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\TestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+// Тестовый маршрут для проверки
+Route::get('/test', TestController::class);
 
 // Публичные маршруты (без аутентификации)
 Route::post('/register', [AuthController::class, 'register']);

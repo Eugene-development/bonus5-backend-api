@@ -27,44 +27,45 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+        // Для SPA аутентификации регистрируем и логиним пользователя
+        Auth::login($user, $request->boolean('remember_me', false));
 
         return response()->json([
             'message' => 'Пользователь успешно зарегистрирован',
             'user' => new UserResource($user),
-            'token' => $token,
         ], 201);
     }
 
     /**
-     * Вход пользователя в систему
+     * Вход пользователя в систему (SPA Authentication)
      */
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->only('email', 'password');
 
-        if (!Auth::attempt($credentials, $request->boolean('remember_me'))) {
+        if (!Auth::attempt($credentials, $request->boolean('remember_me', false))) {
             throw ValidationException::withMessages([
                 'email' => ['Неверные учетные данные.'],
             ]);
         }
 
         $user = Auth::user();
-        $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
             'message' => 'Успешный вход в систему',
             'user' => new UserResource($user),
-            'token' => $token,
         ]);
     }
 
     /**
-     * Выход пользователя из системы
+     * Выход пользователя из системы (SPA Authentication)
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json([
             'message' => 'Успешный выход из системы',
