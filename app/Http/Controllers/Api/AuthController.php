@@ -130,4 +130,32 @@ class AuthController extends Controller
             'message' => 'Письмо с подтверждением отправлено повторно',
         ]);
     }
+
+    /**
+     * Verify email address from web link (for SPA)
+     * Handles verification and redirects to frontend
+     */
+    public function verifyEmailWeb($id, $hash, Request $request)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+                return redirect('http://localhost:5173/email-verify?error=invalid_link');
+            }
+
+            if ($user->hasVerifiedEmail()) {
+                return redirect('http://localhost:5173/dashboard?message=email_already_verified');
+            }
+
+            if ($user->markEmailAsVerified()) {
+                event(new \Illuminate\Auth\Events\Verified($user));
+            }
+
+            // Redirect to frontend dashboard with success message
+            return redirect('http://localhost:5173/dashboard?message=email_verified');
+        } catch (\Exception $e) {
+            return redirect('http://localhost:5173/email-verify?error=verification_failed');
+        }
+    }
 }
