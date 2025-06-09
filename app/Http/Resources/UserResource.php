@@ -19,10 +19,10 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'city' => $this->city,
-            'email_verified_at' => $this->email_verified_at,
+            'email_verified_at' => $this->email_verified_at?->setTimezone('Europe/Moscow'),
             'email_verified' => $this->hasVerifiedEmail(),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->setTimezone('Europe/Moscow'),
+            'updated_at' => $this->updated_at->setTimezone('Europe/Moscow'),
         ];
     }
 }

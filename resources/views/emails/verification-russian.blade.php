@@ -169,9 +169,13 @@
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         <tr>
                                                             <td width="40" valign="top" style="padding-right: 16px;">
-                                                                <div style="width: 24px; height: 24px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                                    <span style="color: #ffffff; font-size: 14px; font-weight: bold;">✓</span>
-                                                                </div>
+                                                                <table cellpadding="0" cellspacing="0" border="0" style="width: 24px; height: 24px; background: #10b981; border-radius: 50%;">
+                                                                    <tr>
+                                                                        <td align="center" valign="middle" style="width: 24px; height: 24px; text-align: center; vertical-align: middle;">
+                                                                            <span style="color: #ffffff; font-size: 14px; font-weight: bold; line-height: 1;">✓</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
                                                             </td>
                                                             <td>
                                                                 <p style="margin: 0; font-size: 16px; color: #d1d5db; line-height: 1.6;">
@@ -187,9 +191,13 @@
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         <tr>
                                                             <td width="40" valign="top" style="padding-right: 16px;">
-                                                                <div style="width: 24px; height: 24px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                                    <span style="color: #ffffff; font-size: 14px; font-weight: bold;">✓</span>
-                                                                </div>
+                                                                <table cellpadding="0" cellspacing="0" border="0" style="width: 24px; height: 24px; background: #10b981; border-radius: 50%;">
+                                                                    <tr>
+                                                                        <td align="center" valign="middle" style="width: 24px; height: 24px; text-align: center; vertical-align: middle;">
+                                                                            <span style="color: #ffffff; font-size: 14px; font-weight: bold; line-height: 1;">✓</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
                                                             </td>
                                                             <td>
                                                                 <p style="margin: 0; font-size: 16px; color: #d1d5db; line-height: 1.6;">
@@ -205,9 +213,13 @@
                                                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                                         <tr>
                                                             <td width="40" valign="top" style="padding-right: 16px;">
-                                                                <div style="width: 24px; height: 24px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                                                    <span style="color: #ffffff; font-size: 14px; font-weight: bold;">✓</span>
-                                                                </div>
+                                                                <table cellpadding="0" cellspacing="0" border="0" style="width: 24px; height: 24px; background: #10b981; border-radius: 50%;">
+                                                                    <tr>
+                                                                        <td align="center" valign="middle" style="width: 24px; height: 24px; text-align: center; vertical-align: middle;">
+                                                                            <span style="color: #ffffff; font-size: 14px; font-weight: bold; line-height: 1;">✓</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
                                                             </td>
                                                             <td>
                                                                 <p style="margin: 0; font-size: 16px; color: #d1d5db; line-height: 1.6;">
@@ -232,7 +244,7 @@
                                 <tr>
                                     <td style="text-align: center;">
                                         <p style="margin: 0 0 16px 0; font-size: 14px; color: #9ca3af; line-height: 1.6;">
-                                            Если вы не регистрировались на нашем сайте, то проигнорируйте это письмо.
+                                            Если вы не регистрировались на нашем сайте, то просто проигнорируйте это письмо.
                                         </p>
                                         <p style="margin: 0; font-size: 14px; color: #6b7280; line-height: 1.6;">
                                             С уважением,<br>
