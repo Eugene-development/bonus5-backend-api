@@ -41,14 +41,12 @@ class VerifyEmailRussian extends Notification
 
         return (new MailMessage)
             ->subject('Подтвердите ваш адрес электронной почты - BONUS5')
-            ->greeting('Добро пожаловать в BONUS5!')
-            ->line('Спасибо за регистрацию в нашем сервисе. Для завершения регистрации необходимо подтвердить ваш адрес электронной почты.')
-            ->line('Нажмите на кнопку ниже, чтобы подтвердить ваш email адрес:')
-            ->action('Подтвердить адрес электронной почты', $verificationUrl)
-            ->line('Если кнопка не работает, скопируйте и вставьте эту ссылку в адресную строку браузера:')
-            ->line($verificationUrl)
-            ->line('Если вы не регистрировались на нашем сайте, просто проигнорируйте это письмо.')
-            ->salutation('С уважением, команда BONUS5');
+            ->from(config('mail.from.address'), 'BONUS5')
+            ->view('emails.verification-russian', [
+                'verificationUrl' => $verificationUrl,
+                'user' => $notifiable,
+                'appName' => config('app.name', 'BONUS5')
+            ]);
     }
 
     /**
@@ -57,7 +55,7 @@ class VerifyEmailRussian extends Notification
     protected function verificationUrl($notifiable)
     {
         return URL::temporarySignedRoute(
-            'verification.verify.web',
+            'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
                 'id' => $notifiable->getKey(),
