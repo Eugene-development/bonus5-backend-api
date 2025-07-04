@@ -76,17 +76,25 @@ CMD ["/usr/local/bin/start.sh"]
 FROM base AS development
 
 # Установка Xdebug для разработки
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug
+# ВАРИАНТ 1: Готовый пакет (рекомендуется)
+RUN apk add --no-cache php82-pecl-xdebug \
+    && echo "zend_extension=/usr/lib/php82/modules/xdebug.so" > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-# Копирование файлов composer
-COPY composer.json composer.lock ./
+# ВАРИАНТ 2: Компиляция через PECL (если нужна последняя версия)
+# RUN apk add --no-cache --virtual .build-deps \
+#     autoconf \
+#     gcc \
+#     g++ \
+#     make \
+#     && pecl install xdebug \
+#     && docker-php-ext-enable xdebug \
+#     && apk del .build-deps
+
+# Копирование всех файлов приложения сначала
+COPY . .
 
 # Установка всех зависимостей (включая dev)
 RUN composer install --optimize-autoloader
-
-# Копирование всех файлов приложения
-COPY . .
 
 # Завершение установки Composer
 RUN composer dump-autoload --optimize
