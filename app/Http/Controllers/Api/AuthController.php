@@ -138,14 +138,19 @@ class AuthController extends Controller
     public function verifyEmailWeb($id, $hash, Request $request)
     {
         try {
+            // Validate parameters
+            if (empty($id) || empty($hash)) {
+                return redirect('http://localhost:5010/email-verify?error=invalid_link');
+            }
+
             $user = User::findOrFail($id);
 
             if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-                return redirect('http://localhost:5173/email-verify?error=invalid_link');
+                return redirect('http://localhost:5010/email-verify?error=invalid_link');
             }
 
             if ($user->hasVerifiedEmail()) {
-                return redirect('http://localhost:5173/dashboard?message=email_already_verified');
+                return redirect('http://localhost:5010/dashboard?message=email_already_verified');
             }
 
             if ($user->markEmailAsVerified()) {
@@ -153,9 +158,9 @@ class AuthController extends Controller
             }
 
             // Redirect to frontend dashboard with success message
-            return redirect('http://localhost:5173/dashboard?message=email_verified');
+            return redirect('http://localhost:5010/dashboard?message=email_verified');
         } catch (\Exception $e) {
-            return redirect('http://localhost:5173/email-verify?error=verification_failed');
+            return redirect('http://localhost:5010/email-verify?error=verification_failed');
         }
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,3 +43,23 @@ Route::get('/email/verified', function () {
 Route::get('/email/verification-failed', function () {
     return view('email-verification-failed');
 })->name('verification.failed');
+
+// Note: Registration now handled via /api/register endpoint
+
+// Note: Debug routes removed after successful SPA authentication fix
+
+// SPA API endpoints in web routes for stateful authentication
+Route::prefix('api')->middleware(['web'])->group(function () {
+    // Protected routes
+    Route::middleware(['auth'])->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/user', [UserController::class, 'show']);
+
+        // Email verification routes (require authentication)
+        Route::post('/email/verification-notification', [AuthController::class, 'sendEmailVerification'])
+            ->middleware('throttle:6,1')
+            ->name('verification.send');
+        Route::post('/email/verify/resend', [AuthController::class, 'resendEmailVerification'])
+            ->middleware('throttle:6,1');
+    });
+});

@@ -11,22 +11,12 @@ Route::get('/test', TestController::class);
 
 // Публичные маршруты (без аутентификации)
 Route::post('/register', [AuthController::class, 'register']);
+Route::post('/registration', [AuthController::class, 'register']); // Алиас для совместимости с фронтендом
 Route::post('/login', [AuthController::class, 'login']);
 
 // Email verification маршруты
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-    ->middleware(['auth:sanctum', 'signed'])
+    ->middleware(['auth', 'signed'])
     ->name('verification.verify');
 
-// Защищенные маршруты (с аутентификацией Sanctum)
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [UserController::class, 'show']);
-
-    // Email verification маршруты (требуют аутентификацию)
-    Route::post('/email/verification-notification', [AuthController::class, 'sendEmailVerification'])
-        ->middleware('throttle:6,1')
-        ->name('verification.send');
-    Route::post('/email/verify/resend', [AuthController::class, 'resendEmailVerification'])
-        ->middleware('throttle:6,1');
-});
+// Note: Protected routes moved to web.php for SPA stateful authentication
