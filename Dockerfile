@@ -1,16 +1,8 @@
 # Multi-stage build для оптимизации размера образа
 FROM php:8.2-fpm-alpine AS base
 
-# Установка системных зависимостей
-RUN apk add --no-cache \
-    curl \
-    zip \
-    unzip \
-    git \
-    nginx \
-    supervisor \
-    mysql-client \
-    && docker-php-ext-install pdo pdo_mysql
+# Минимальные PHP расширения (как в ваших предыдущих проектах)
+RUN docker-php-ext-install pdo pdo_mysql
 
 # Установка Composer
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
@@ -45,50 +37,26 @@ RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions sto
     && chmod -R 775 storage bootstrap/cache \
     && chown -R laravel:laravel /var/www
 
-# Конфигурация Nginx
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-
-# Конфигурация PHP-FPM
+# Конфигурация PHP-FPM для Docker
 RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.d/www.conf
-
-# Конфигурация Supervisor
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Создание стартового скрипта
-COPY docker/start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
 
 # Переключение на пользователя laravel
 USER laravel
 
-# Экспорт порта
-EXPOSE 80
+# Экспорт порта PHP-FPM
+EXPOSE 9000
 
-# Переключение обратно на root для запуска supervisor
-USER root
-
-# Команда запуска
-CMD ["/usr/local/bin/start.sh"]
+# Команда запуска только PHP-FPM
+CMD ["php-fpm"]
 
 ###########################################
 # Development Build Stage
 ###########################################
 FROM base AS development
 
-# Установка Xdebug для разработки
-# ВАРИАНТ 1: Готовый пакет (рекомендуется)
-RUN apk add --no-cache php82-pecl-xdebug \
-    && echo "zend_extension=/usr/lib/php82/modules/xdebug.so" > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
-# ВАРИАНТ 2: Компиляция через PECL (если нужна последняя версия)
-# RUN apk add --no-cache --virtual .build-deps \
-#     autoconf \
-#     gcc \
-#     g++ \
-#     make \
-#     && pecl install xdebug \
-#     && docker-php-ext-enable xdebug \
-#     && apk del .build-deps
+# Xdebug для разработки (ОПЦИОНАЛЬНО - раскомментируйте если нужен)
+# RUN apk add --no-cache php82-pecl-xdebug \
+#     && echo "zend_extension=/usr/lib/php82/modules/xdebug.so" > /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # Копирование всех файлов приложения сначала
 COPY . .
@@ -108,8 +76,8 @@ RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions sto
 # Переключение на пользователя laravel
 USER laravel
 
-# Экспорт порта
-EXPOSE 8000
+# Экспорт порта PHP-FPM
+EXPOSE 9000
 
-# Команда запуска для разработки
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# Команда запуска для разработки (PHP-FPM)
+CMD ["php-fpm"]
