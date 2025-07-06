@@ -19,4 +19,5 @@ Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
     ->middleware(['auth', 'signed'])
     ->name('verification.verify');
 
+
 // Note: Protected routes moved to web.php for SPA stateful authentication

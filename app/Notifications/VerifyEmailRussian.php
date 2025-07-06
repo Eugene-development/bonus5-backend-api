@@ -54,7 +54,12 @@ class VerifyEmailRussian extends Notification
      */
     protected function verificationUrl($notifiable)
     {
-        return URL::temporarySignedRoute(
+        // Force Laravel to use APP_URL instead of HTTP_HOST header
+        // This ensures email URLs work for browser users
+        $originalUrl = URL::to('/');
+        URL::forceRootUrl(config('app.url')); // Force use APP_URL=http://localhost:7010
+
+        $url = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
@@ -62,6 +67,11 @@ class VerifyEmailRussian extends Notification
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]
         );
+
+        // Restore original URL for other requests
+        URL::forceRootUrl($originalUrl);
+
+        return $url;
     }
 
     /**
