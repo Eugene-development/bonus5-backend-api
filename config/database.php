@@ -58,7 +58,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? [
-                PDO::MYSQL_ATTR_SSL_CA => '/run/secrets/db_ssl_ca_dev',
+                PDO::MYSQL_ATTR_SSL_CA => '/run/secrets/db_ssl_ca',
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
             ] : [],
         ],
