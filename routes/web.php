@@ -50,6 +50,11 @@ Route::get('/email/verification-failed', function () {
 
 // SPA API endpoints in web routes for stateful authentication
 Route::prefix('api')->middleware(['web'])->group(function () {
+    // Public routes (for stateful authentication)
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/registration', [AuthController::class, 'register']); // Alias for frontend compatibility
+    Route::post('/login', [AuthController::class, 'login']);
+
     // Protected routes
     Route::middleware(['auth'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);

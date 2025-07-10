@@ -140,17 +140,17 @@ class AuthController extends Controller
         try {
             // Validate parameters
             if (empty($id) || empty($hash)) {
-                return redirect('http://localhost:5010/email-verify?error=invalid_link');
+                return redirect($this->getFrontendUrl() . '/email-verify?error=invalid_link');
             }
 
             $user = User::findOrFail($id);
 
             if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-                return redirect('http://localhost:5010/email-verify?error=invalid_link');
+                return redirect($this->getFrontendUrl() . '/email-verify?error=invalid_link');
             }
 
             if ($user->hasVerifiedEmail()) {
-                return redirect('http://localhost:5010/dashboard?message=email_already_verified');
+                return redirect($this->getFrontendUrl() . '/dashboard?message=email_already_verified');
             }
 
             if ($user->markEmailAsVerified()) {
@@ -158,9 +158,27 @@ class AuthController extends Controller
             }
 
             // Redirect to frontend dashboard with success message
-            return redirect('http://localhost:5010/dashboard?message=email_verified');
+            return redirect($this->getFrontendUrl() . '/dashboard?message=email_verified');
         } catch (\Exception $e) {
-            return redirect('http://localhost:5010/email-verify?error=verification_failed');
+            return redirect($this->getFrontendUrl() . '/email-verify?error=verification_failed');
         }
+    }
+
+    /**
+     * Get frontend URL based on environment
+     * @return string
+     */
+    private function getFrontendUrl(): string
+    {
+        // Check if running in development environment
+        $isDevelopment = config('app.env') === 'local' || config('app.debug');
+
+        if ($isDevelopment) {
+            // For local development (npm run dev)
+            return 'http://localhost:5173';
+        }
+
+        // For Docker/production environment
+        return 'http://localhost:5010';
     }
 }

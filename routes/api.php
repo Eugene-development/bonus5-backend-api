@@ -9,10 +9,7 @@ use Illuminate\Support\Facades\Route;
 // Тестовый маршрут для проверки
 Route::get('/test', TestController::class);
 
-// Публичные маршруты (без аутентификации)
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/registration', [AuthController::class, 'register']); // Алиас для совместимости с фронтендом
-Route::post('/login', [AuthController::class, 'login']);
+// Note: Login/register routes moved to web.php for stateful authentication
 
 // Email verification маршруты
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
